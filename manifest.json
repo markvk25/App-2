@@ -1,9 +1,0 @@
-{
-  "name": "Uit je hoofd",
-  "short_name": "Uit je hoofd",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#0d1320",
-  "theme_color": "#0d1320",
-  "icons": []
-}

@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta name="theme-color" content="#0d1320" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Uit je hoofd</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    :root{
+      --bg:#0d1320; --card:#151d2c; --card2:#1b2638; --text:#f5f7fb;
+      --muted:#aab6c7; --accent:#9fc5ff; --soft:#243147; --ok:#b9e6c9;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:linear-gradient(180deg,#0b111c,#111928);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+    body{padding:env(safe-area-inset-top) 16px env(safe-area-inset-bottom)}
+    .app{max-width:760px;margin:0 auto;padding:18px 0 36px}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+    h1{font-size:28px;margin:0;letter-spacing:-.5px}
+    .sub{color:var(--muted);font-size:14px;margin-top:4px}
+    .pill{border:1px solid #2b3a52;color:var(--muted);padding:8px 12px;border-radius:999px;font-size:13px}
+    .card{background:rgba(21,29,44,.92);border:1px solid #26344b;border-radius:24px;padding:20px;margin:14px 0;box-shadow:0 16px 40px rgba(0,0,0,.18)}
+    .hero{padding:24px}
+    h2{font-size:22px;margin:0 0 8px}
+    p{color:var(--muted);line-height:1.5;margin:8px 0}
+    textarea{width:100%;min-height:170px;resize:none;background:#0f1724;color:var(--text);border:1px solid #2c3a50;border-radius:18px;padding:16px;font-size:18px;line-height:1.5;outline:none}
+    textarea:focus{border-color:#6485b4}
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    button{appearance:none;border:0;border-radius:16px;padding:14px 18px;font-size:16px;font-weight:650;background:var(--accent);color:#0a1220}
+    button.secondary{background:var(--soft);color:var(--text)}
+    button.ghost{background:transparent;color:var(--muted);border:1px solid #34435a}
+    button:active{transform:scale(.98)}
+    .hidden{display:none}
+    .section-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .list{display:grid;gap:10px}
+    .item{background:#111a28;border:1px solid #29384e;border-radius:16px;padding:14px 14px;display:flex;gap:12px;align-items:flex-start}
+    .dot{width:10px;height:10px;border-radius:50%;margin-top:6px;flex:0 0 auto;background:#7fa8df}
+    .dot.green{background:#8fc6a3}.dot.gray{background:#77879c}
+    .item strong{display:block;font-size:15px;margin-bottom:3px}
+    .item span{color:var(--muted);font-size:14px;line-height:1.4}
+    .quote{font-size:23px;line-height:1.35;text-align:center;padding:14px 4px;color:#eef4ff}
+    .breath-wrap{display:grid;place-items:center;padding:18px 0 8px}
+    .orb{width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#cce0ff,#7598c9 60%,#456387);box-shadow:0 0 55px rgba(130,170,230,.25);transition:transform 4s ease-in-out,opacity 1s}
+    .orb.inhale{transform:scale(1.35)}
+    .orb.exhale{transform:scale(.9)}
+    .breath-text{text-align:center;font-size:20px;margin:18px 0 8px}
+    nav{position:sticky;bottom:12px;background:rgba(12,18,29,.92);backdrop-filter:blur(16px);border:1px solid #29364a;border-radius:20px;padding:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:22px}
+    nav button{padding:12px 8px;border-radius:14px;background:transparent;color:var(--muted);font-size:13px}
+    nav button.active{background:#1c2940;color:#fff}
+    .tiny{font-size:12px;color:#7f8da2;margin-top:12px;text-align:center}
+
+    .goodnight-overlay{
+      position:fixed; inset:0; z-index:9999;
+      display:flex; align-items:center; justify-content:center;
+      padding:28px;
+      background:rgba(7,12,20,.96);
+      backdrop-filter:blur(18px);
+      opacity:0; pointer-events:none;
+      transition:opacity .7s ease;
+    }
+    .goodnight-overlay.show{opacity:1;pointer-events:auto}
+    .goodnight-box{
+      width:min(620px,100%);
+      text-align:center;
+      background:linear-gradient(180deg,#182337,#111a29);
+      border:1px solid #30425e;
+      border-radius:32px;
+      padding:38px 28px;
+      box-shadow:0 30px 80px rgba(0,0,0,.45);
+      transform:translateY(18px) scale(.98);
+      transition:transform .7s ease;
+    }
+    .goodnight-overlay.show .goodnight-box{transform:translateY(0) scale(1)}
+    .moon{font-size:58px;margin-bottom:10px}
+    .goodnight-title{font-size:42px;letter-spacing:-1px;margin:0 0 10px}
+    .goodnight-sub{font-size:18px;color:#b9c6d8;line-height:1.5;margin:0 auto 24px;max-width:470px}
+    .goodnight-quote{
+      font-size:21px; line-height:1.5;
+      background:#0e1725;
+      border:1px solid #2c3c54;
+      border-radius:20px;
+      padding:20px;
+      margin:20px 0 24px;
+      color:#f3f6fb;
+    }
+
+    @media (min-width:700px){
+      .app{padding-top:34px}
+      textarea{min-height:210px}
+      .card{padding:24px}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div>
+      <h1>Uit je hoofd</h1>
+      <div class="sub" id="greeting">Voor een rustiger hoofd vannacht</div>
+    </div>
+    <div class="pill">nachtmodus</div>
+  </header>
+
+  <main>
+    <section id="screen-empty">
+      <div class="card hero">
+        <h2>Wat houdt je bezig?</h2>
+        <p>Schrijf alles op zoals het in je hoofd zit. Je hoeft het niet netjes te formuleren.</p>
+        <textarea id="brainDump" placeholder="Bijvoorbeeld: morgen Jan bellen, ik maak me druk over dat gesprek, niet vergeten om de rekening te betalen..."></textarea>
+        <div class="row">
+          <button id="sortBtn">Ontzorg mij</button>
+          <button id="clearBtn" class="ghost">Leegmaken</button>
+        </div>
+      </div>
+
+      <div id="result" class="hidden">
+        <div class="card">
+          <div class="quote">Dit staat genoteerd. Voor vannacht hoef je het niet allemaal meer vast te houden.</div>
+        </div>
+
+        <div class="card">
+          <div class="section-title"><h2>Morgen regelen</h2><span class="pill" id="taskCount">0</span></div>
+          <div class="list" id="tasks"></div>
+        </div>
+
+        <div class="card">
+          <div class="section-title"><h2>Voor vannacht parkeren</h2></div>
+          <div class="list" id="parked"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-tomorrow" class="hidden">
+      <div class="card">
+        <h2>Morgenlijst</h2>
+        <p>Alleen de dingen die je echt hoeft te onthouden.</p>
+        <div class="list" id="tomorrowList"></div>
+        <div class="row"><button class="secondary" id="clearTomorrow">Alles afvinken</button></div>
+      </div>
+    </section>
+
+    <section id="screen-sleep" class="hidden">
+      <div class="card">
+        <h2>2-minuten-reset</h2>
+        <p>Volg alleen het ritme. Je hoeft verder niets te doen.</p>
+        <div class="breath-wrap">
+          <div id="orb" class="orb"></div>
+        </div>
+        <div id="breathText" class="breath-text">Tik op starten</div>
+        <div class="row" style="justify-content:center">
+          <button id="breathBtn" type="button">Start ademhaling</button>
+          <button id="stopBtn" type="button" class="ghost">Stop</button>
+        </div>
+        <div class="row" style="justify-content:center">
+          <button id="musicBtn" type="button" class="secondary">♫ Rustige muziek aan</button>
+        </div>
+        <audio id="nightMusic" src="nacht-ambient.wav" preload="auto" loop playsinline></audio>
+        <div class="tiny">Adem rustig. Als het niet prettig voelt, stop gewoon.</div>
+      </div>
+
+      <div class="card">
+        <h2>Als je blijft malen</h2>
+        <p>Vraag jezelf maar één ding af:</p>
+        <div class="quote">“Kan ik hier vannacht nog iets zinnigs aan doen?”</div>
+        <p style="text-align:center">Zo nee: parkeer het. Zo ja: noteer één kleine actie voor morgen.</p>
+      </div>
+    </section>
+  </main>
+
+  <nav>
+    <button data-screen="empty" class="active">Hoofd leeg</button>
+    <button data-screen="tomorrow">Morgen</button>
+    <button data-screen="sleep">Slaapmodus</button>
+  </nav>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const storageKey = 'uitJeHoofdTasks';
+
+function loadTasks(){ return JSON.parse(localStorage.getItem(storageKey) || '[]'); }
+function saveTasks(tasks){ localStorage.setItem(storageKey, JSON.stringify(tasks)); renderTomorrow(); }
+
+function classify(text){
+  const chunks = text
+    .split(/\n|[.!?]+/)
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  const actionWords = /(bellen|mailen|regelen|betalen|kopen|halen|brengen|maken|doen|sturen|vragen|afspraak|niet vergeten|morgen|bestellen|invullen|boeken|checken|controleren)/i;
+  const worryWords = /(bang|zorgen|druk|piek|stress|wat als|misschien|onrust|denk steeds|gesprek|fout|misgaat|schuldig|twijfel)/i;
+
+  let tasks=[], parked=[];
+  chunks.forEach(c=>{
+    if(actionWords.test(c)) tasks.push(c);
+    else if(worryWords.test(c)) parked.push(c);
+    else parked.push(c);
+  });
+  return {tasks, parked};
+}
+
+function makeItem(text, type='task'){
+  const div=document.createElement('div');
+  div.className='item';
+  div.innerHTML=`<div class="dot ${type==='parked'?'gray':'green'}"></div><div><strong>${type==='parked'?'Geparkeerd':'Morgen'}</strong><span></span></div>`;
+  div.querySelector('span').textContent=text;
+  return div;
+}
+
+$('#sortBtn').onclick=()=>{
+  const text=$('#brainDump').value.trim();
+  if(!text) return;
+  const {tasks, parked}=classify(text);
+  const old=loadTasks();
+  const combined=[...old, ...tasks.filter(t=>!old.includes(t))];
+  saveTasks(combined);
+  $('#tasks').innerHTML=''; $('#parked').innerHTML='';
+  (tasks.length?tasks:['Geen concrete taak gevonden.']).forEach(t=>$('#tasks').appendChild(makeItem(t,'task')));
+  (parked.length?parked:['Niets extra’s om te parkeren.']).forEach(t=>$('#parked').appendChild(makeItem(t,'parked')));
+  $('#taskCount').textContent=tasks.length;
+  $('#result').classList.remove('hidden');
+  localStorage.setItem('lastDump', text);
+};
+
+$('#clearBtn').onclick=()=>{ $('#brainDump').value=''; $('#result').classList.add('hidden'); };
+
+function renderTomorrow(){
+  const list=$('#tomorrowList'); list.innerHTML='';
+  const tasks=loadTasks();
+  if(!tasks.length){
+    const p=document.createElement('p'); p.textContent='Je morgenlijst is leeg.'; list.appendChild(p); return;
+  }
+  tasks.forEach((t,i)=>{
+    const item=makeItem(t,'task');
+    item.style.cursor='pointer';
+    item.onclick=()=>{
+      const arr=loadTasks(); arr.splice(i,1); saveTasks(arr);
+    };
+    list.appendChild(item);
+  });
+}
+$('#clearTomorrow').onclick=()=>{ saveTasks([]); };
+
+document.querySelectorAll('nav button').forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    ['empty','tomorrow','sleep'].forEach(s=>$('#screen-'+s).classList.add('hidden'));
+    $('#screen-'+btn.dataset.screen).classList.remove('hidden');
+    if(btn.dataset.screen==='tomorrow') renderTomorrow();
+  }
+});
+
+
+const funnyQuotes = [
+  "Morgen weer een dag. Vannacht is je enige taak professioneel horizontaal liggen.",
+  "Je problemen hebben nu geen nachtdienst. Jij dus ook niet.",
+  "Alles wat je vannacht niet oplost, staat morgenochtend verrassend genoeg nog gewoon klaar.",
+  "Slaap: de gratis proefversie van even nergens aan hoeven denken.",
+  "Je hoofd is gesloten. Openingstijden: morgen weer.",
+  "Voor vandaag heb je genoeg tabbladen open gehad. Tijd om de browser af te sluiten.",
+  "Morgen mag je weer serieus doen. Nu eerst acht uur lang doen alsof je een burrito bent.",
+  "De wereld draait vannacht gewoon door zonder jouw toezicht. Waarschijnlijk.",
+  "Piekeren na sluitingstijd wordt niet meer in behandeling genomen.",
+  "Leg je hoofd maar neer. De directie heeft de vergadering beëindigd."
+];
+
+function showGoodnight(){
+  const quote = funnyQuotes[Math.floor(Math.random()*funnyQuotes.length)];
+  $('#goodnightQuote').textContent = '“' + quote + '”';
+  const overlay = $('#goodnightOverlay');
+  overlay.classList.add('show');
+  overlay.setAttribute('aria-hidden','false');
+  localStorage.setItem('lastDayClosed', new Date().toISOString());
+}
+
+$('#closeGoodnight').onclick=()=>{
+  const overlay = $('#goodnightOverlay');
+  overlay.classList.remove('show');
+  overlay.setAttribute('aria-hidden','true');
+};
+
+let breathTimer = null;
+let breathEnd = null;
+let phaseIndex = 0;
+const breathPhases = [
+  {label:'Adem rustig in', cls:'inhale', seconds:4},
+  {label:'Hou even vast', cls:'inhale', seconds:2},
+  {label:'Adem langzaam uit', cls:'exhale', seconds:6}
+];
+
+function setBreathPhase(){
+  if(!breathEnd) return;
+  const left = Math.max(0, Math.ceil((breathEnd - Date.now())/1000));
+  if(left <= 0){
+    finishBreathing();
+    return;
+  }
+  const phase = breathPhases[phaseIndex % breathPhases.length];
+  const orb = $('#orb');
+  orb.classList.remove('inhale','exhale');
+  void orb.offsetWidth;
+  orb.classList.add(phase.cls);
+  $('#breathText').textContent = `${phase.label} · nog ${left} sec`;
+  phaseIndex++;
+  breathTimer = setTimeout(setBreathPhase, phase.seconds * 1000);
+}
+
+function startBreathing(){
+  clearTimeout(breathTimer);
+  breathEnd = Date.now() + 120000;
+  phaseIndex = 0;
+  $('#breathBtn').textContent = 'Bezig…';
+  setBreathPhase();
+}
+
+function stopBreath(msg='Gestopt'){
+  clearTimeout(breathTimer);
+  breathTimer = null;
+  breathEnd = null;
+  phaseIndex = 0;
+  $('#orb').classList.remove('inhale','exhale');
+  $('#breathText').textContent = msg;
+  $('#breathBtn').textContent = 'Start ademhaling';
+}
+
+function finishBreathing(){
+  stopBreath('Klaar. De dag is afgesloten.');
+  setTimeout(showGoodnight, 600);
+}
+
+$('#breathBtn').addEventListener('click', startBreathing);
+$('#stopBtn').addEventListener('click', ()=>stopBreath());
+
+const music = $('#nightMusic');
+music.volume = 0.16;
+let musicOn = false;
+
+async function toggleMusic(){
+  try{
+    if(!musicOn){
+      await music.play();
+      musicOn = true;
+      $('#musicBtn').textContent = '♫ Rustige muziek uit';
+    }else{
+      music.pause();
+      musicOn = false;
+      $('#musicBtn').textContent = '♫ Rustige muziek aan';
+    }
+  }catch(e){
+    $('#musicBtn').textContent = 'Tik nogmaals voor muziek';
+  }
+}
+$('#musicBtn').addEventListener('click', toggleMusic);
+
+const hour=new Date().getHours();
+$('#greeting').textContent = hour>=21 || hour<6 ? 'Voor vannacht hoef je niet alles op te lossen.' : 'Maak je hoofd alvast wat lichter.';
+renderTomorrow();
+</script>
+
+<div id="goodnightOverlay" class="goodnight-overlay" aria-hidden="true">
+  <div class="goodnight-box">
+    <div class="moon">🌙</div>
+    <h2 class="goodnight-title">Welterusten</h2>
+    <p class="goodnight-sub">Je hebt je hoofd geleegd, je ademhaling gedaan en de dag mag nu klaar zijn. Morgen is er weer tijd voor de rest.</p>
+    <div id="goodnightQuote" class="goodnight-quote"></div>
+    <button id="closeGoodnight">Dag afgesloten ✓</button>
+  </div>
+</div>
+
+</body>
+</html>
